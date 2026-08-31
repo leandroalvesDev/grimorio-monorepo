@@ -74,7 +74,7 @@ export function Sidebar() {
             Como usar
           </span>
           <span className="text-[10px] leading-relaxed text-zinc-500">
-            Entenda extensões e catálogos da comunidade.
+            Entenda extensões e conectores da comunidade.
           </span>
         </a>
         <p className="mt-3 px-1 font-display text-[13px] italic leading-snug text-zinc-400">

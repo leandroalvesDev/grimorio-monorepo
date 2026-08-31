@@ -1,12 +1,24 @@
 "use client";
 
-import { Puzzle, Sparkles } from "lucide-react";
+import { FormEvent, useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Puzzle, Search, Sparkles } from "lucide-react";
 import { ContinueReadingRail } from "@/components/catalog/continue-reading-rail";
 import { Rail } from "@/components/catalog/rail";
 import { useRails } from "@/hooks/use-rails";
 
 export default function HomePage() {
-  const { rails, isMock } = useRails();
+  const router = useRouter();
+  const { rails } = useRails();
+  const [query, setQuery] = useState("");
+
+  function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+    const q = query.trim();
+    if (!q) return;
+    router.push(`/search?q=${encodeURIComponent(q)}`);
+  }
 
   return (
     <div>
@@ -28,9 +40,7 @@ export default function HomePage() {
                 <span className="font-display italic text-zinc-300">
                   Toda prateleira começa vazia.
                 </span>{" "}
-                {isMock
-                  ? "Mostrando um catálogo de demonstração."
-                  : "Seus catálogos da comunidade, num só lugar."}
+                Busque em tempo real nas fontes que você ativou.
               </p>
             </div>
             <a
@@ -41,22 +51,45 @@ export default function HomePage() {
               Explorar extensões
             </a>
           </div>
+
+          <form
+            onSubmit={handleSubmit}
+            className="mt-5 flex max-w-2xl items-center gap-2"
+          >
+            <div className="relative flex-1">
+              <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-zinc-500" />
+              <input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Buscar mangá, HQ ou livro… (MangaDex, HQ Now, Só Quadrinhos, Baixe Livros)"
+                aria-label="Buscar na estante"
+                className="w-full rounded-full border border-white/10 bg-white/[0.04] py-3 pl-10 pr-4 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-[#d34134]/50 focus:outline-none focus:ring-2 focus:ring-[#d34134]/30"
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={!query.trim()}
+              className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-[#d34134] px-4 py-3 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              <Search className="size-3.5" />
+              <span className="hidden sm:inline">Buscar</span>
+            </button>
+          </form>
         </div>
       </header>
 
       <main className="pb-10">
         <ContinueReadingRail />
 
-        {isMock && (
-          <p className="mb-2 flex items-center gap-1.5 px-4 text-[11px] text-zinc-600 md:px-8">
-            <Sparkles className="size-3.5 text-[#d34134]" />
-            Dica: em{" "}
-            <a href="/addons" className="text-[#ff5a4e] hover:underline">
-              Extensões
-            </a>{" "}
-            você instala catálogos reais e estes trilhos de exemplo desaparecem.
-          </p>
-        )}
+        <p className="mb-2 flex items-center gap-1.5 px-4 text-[11px] text-zinc-600 md:px-8">
+          <Sparkles className="size-3.5 text-[#d34134]" />
+          Abaixo, um catálogo de demonstração do leitor. O conteúdo real chega
+          pela{" "}
+          <Link href="/search" className="text-[#ff5a4e] hover:underline">
+            Busca
+          </Link>{" "}
+          — use as extensões que você ativar.
+        </p>
 
         {rails.map((rail) => (
           <Rail key={rail.key} rail={rail} />

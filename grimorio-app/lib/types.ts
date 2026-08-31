@@ -49,8 +49,6 @@ export interface Catalog {
   rails: CatalogRail[];
 }
 
-export type RepoStatus = "loading" | "ok" | "error";
-
 /** Add-on anunciado pelo diretório de extensões (extensions-catalog.json). */
 export interface Extension {
   id: string;
@@ -58,18 +56,10 @@ export interface Extension {
   description?: string;
   /** URL de uma imagem OU um monograma/texto curto exibido como badge. */
   icon?: string;
-  /** Catálogo (JSON de `Catalog`) que o add-on injeta no app. */
-  source_url: string;
-}
-
-export interface Repository {
-  id: string;
-  url: string;
-  name: string;
-  description?: string;
-  version?: string;
-  status: RepoStatus;
-  addedAt: number;
+  /**
+   * ID do conector em `/api/scrape?provider=…`. Quando ausente, usa `id`.
+   */
+  provider?: string;
 }
 
 export interface ReadingProgress {

@@ -8,27 +8,22 @@ import { useReaderStore } from "@/store/reader-store";
 import { PosterCard } from "@/components/catalog/poster-card";
 import { ContinueReadingRail } from "@/components/catalog/continue-reading-rail";
 
-function buildItemMap(
-  catalogCache: Record<string, { rails: { items: CatalogItem[] }[] }>
-) {
+function buildItemMap(readingRecords: { itemId: string; item: CatalogItem }[]) {
   const map = new Map<string, CatalogItem>();
-  for (const catalog of Object.values(catalogCache)) {
-    for (const rail of catalog.rails) {
-      for (const item of rail.items) map.set(item.id, item);
-    }
-  }
   for (const rail of mockCatalog.rails) {
     for (const item of rail.items) map.set(item.id, item);
+  }
+  for (const record of readingRecords) {
+    map.set(record.itemId, record.item);
   }
   return map;
 }
 
 export default function LibraryPage() {
   const library = useReaderStore((s) => s.library);
-  const catalogCache = useReaderStore((s) => s.catalogCache);
   const continueReading = useReaderStore((s) => s.continueReading);
 
-  const itemMap = buildItemMap(catalogCache);
+  const itemMap = buildItemMap(continueReading);
   const savedItems = library
     .map((id) => itemMap.get(id))
     .filter((i): i is CatalogItem => Boolean(i));

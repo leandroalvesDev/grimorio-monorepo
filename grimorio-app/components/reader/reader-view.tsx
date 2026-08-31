@@ -23,6 +23,7 @@ interface ReaderViewProps {
   itemId: string;
   repoId?: string;
   fallbackUrl?: string;
+  fallbackType?: CatalogItem["type"];
 }
 
 function binaryKindFromUrl(url: string): "epub" | "cbz" | null {
@@ -31,24 +32,20 @@ function binaryKindFromUrl(url: string): "epub" | "cbz" | null {
   return null;
 }
 
-export function ReaderView({ itemId, repoId, fallbackUrl }: ReaderViewProps) {
+export function ReaderView({
+  itemId,
+  repoId,
+  fallbackUrl,
+  fallbackType,
+}: ReaderViewProps) {
   const router = useRouter();
-  const catalogCache = useReaderStore((s) => s.catalogCache);
   const savedRecords = useReaderStore((s) => s.continueReading);
   const setReadingProgress = useReaderStore((s) => s.setReadingProgress);
   const isInLibrary = useReaderStore((s) => s.isInLibrary);
   const toggleLibrary = useReaderStore((s) => s.toggleLibrary);
 
   const { item, initialPosition } = useMemo(() => {
-    const repoCat = repoId ? catalogCache[repoId] : null;
-
     const find = (itemIdIn: string) => {
-      if (repoCat) {
-        for (const rail of repoCat.rails) {
-          const found = rail.items.find((i) => i.id === itemIdIn);
-          if (found) return found;
-        }
-      }
       for (const rail of mockCatalog.rails) {
         const found = rail.items.find((i) => i.id === itemIdIn);
         if (found) return found;
@@ -59,9 +56,15 @@ export function ReaderView({ itemId, repoId, fallbackUrl }: ReaderViewProps) {
     const found = find(itemId);
 
     if (!found && fallbackUrl) {
-      const guessType = /\.cbz$|\.zip$/i.test(fallbackUrl)
-        ? "cbz"
-        : "epub";
+      const guessType: CatalogItem["type"] =
+        fallbackType ??
+        (/\/api\/scrape(\?|$)/.test(fallbackUrl)
+          ? "comic"
+          : /\.cbz$|\.zip$/i.test(fallbackUrl)
+            ? "cbz"
+            : /\.epub(\?|$)/i.test(fallbackUrl)
+              ? "epub"
+              : "comic");
       let prettyTitle = itemId;
       try {
         prettyTitle = decodeURIComponent(itemId);
@@ -81,7 +84,7 @@ export function ReaderView({ itemId, repoId, fallbackUrl }: ReaderViewProps) {
 
     const saved = savedRecords.find((p) => p.itemId === itemId);
     return { item: found, initialPosition: saved?.position ?? undefined };
-  }, [itemId, repoId, fallbackUrl, catalogCache, savedRecords]);
+  }, [itemId, fallbackUrl, fallbackType, savedRecords]);
 
   const [status, setStatus] = useState<"loading" | "ready" | "error">(
     "loading"

@@ -3,28 +3,24 @@
     "id": "mangadex",
     "name": "MangaDex",
     "description": "Mangás em streaming via API oficial do MangaDex.",
-    "icon": "manga",
-    "source_url": "catalogs/mangadex.json"
+    "icon": "manga"
   },
   {
     "id": "so-quadrinhos",
     "name": "Só Quadrinhos",
     "description": "Quadrinhos de acervo WordPress: leitor sequencial ou link direto (.cbz/.pdf).",
-    "icon": "hq",
-    "source_url": "catalogs/so-quadrinhos.json"
+    "icon": "hq"
   },
   {
     "id": "hq-now",
     "name": "HQ Now",
     "description": "HQs via API interna GraphQL do HQ Now.",
-    "icon": "sq",
-    "source_url": "catalogs/hq-now.json"
+    "icon": "sq"
   },
   {
     "id": "baixe-livros",
     "name": "Baixe Livros",
     "description": "Livros com URL direta de download (EPUB/PDF).",
-    "icon": "livros",
-    "source_url": "catalogs/baixe-livros.json"
+    "icon": "livros"
   }
 ]

@@ -1,13 +1,12 @@
 import Link from "next/link";
 import {
-  Link2,
+  BookOpen,
+  Check,
+  Search,
   Server,
-  FileJson,
-  Globe,
   Network,
   Bug,
-  Sparkles,
-  Check,
+  Zap,
   BookMarked,
 } from "lucide-react";
 
@@ -17,7 +16,7 @@ function Section({
   id,
   children,
 }: {
-  icon: typeof Link2;
+  icon: typeof BookOpen;
   title: string;
   id: string;
   children: React.ReactNode;
@@ -73,10 +72,11 @@ export default function GuidePage() {
         </h1>
         <p className="mt-2 text-sm leading-relaxed text-zinc-400">
           O Grimório é uma <span className="text-zinc-200">prateleira vazia</span>:
-          ele não guarda conteúdo. Tudo o que aparece na tela vem de{" "}
-          <span className="text-zinc-200">repositórios da comunidade</span> —
-          catálogos em JSON publicados por qualquer pessoa na internet. Este guia
-          explica o que é um add-on e como instalar os seus.
+          ele não guarda conteúdo. Tudo o que você busca vem de{" "}
+          <span className="text-zinc-200">extensões da comunidade</span> —
+          conectores dinâmicos que consultam as fontes em tempo real (API
+          oficial do MangaDex, HQ Now, Só Quadrinhos e Baixe Livros). Este guia
+          explica o que é um add-on e como usar o seu.
         </p>
         <div className="mt-6 flex flex-wrap gap-2">
           <a
@@ -92,16 +92,10 @@ export default function GuidePage() {
             Instalar
           </a>
           <a
-            href="#formato"
+            href="#buscar"
             className="rounded-full border border-white/10 px-3 py-1.5 text-xs text-zinc-300 transition-colors hover:bg-white/5 hover:text-white"
           >
-            Formato do catálogo
-          </a>
-          <a
-            href="#hospedar"
-            className="rounded-full border border-white/10 px-3 py-1.5 text-xs text-zinc-300 transition-colors hover:bg-white/5 hover:text-white"
-          >
-            Onde hospedar
+            Buscar e streaming
           </a>
           <a
             href="#como-funciona"
@@ -132,71 +126,57 @@ export default function GuidePage() {
 
       <Section icon={Server} title="O que é um add-on?" id="conceito">
         <p>
-          Um <span className="text-zinc-200">add-on</span> (também chamado de{" "}
-          <span className="text-zinc-200">repositório</span>) é simplesmente uma{" "}
-          <span className="text-zinc-200">URL pública</span> que responde com um
-          arquivo JSON descrevendo um catálogo. Quando você adiciona essa URL ao
-          Grimório, os trilhos dela aparecem na Início — e é só clicar para ler.
+          Um <span className="text-zinc-200">add-on</span> (extensão) é um{" "}
+          <span className="text-zinc-200">conector dinâmico</span>: um provedor
+          de busca registrado no diretório que, ao ser{" "}
+          <span className="text-zinc-200">ativado</span>, passa a responder às
+          consultas do app em tempo real. Nada de baixar arquivos em JSON a cada
+          instalação — o app consulta a fonte na hora que você digita.
         </p>
         <div className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-3">
           <p className="text-xs font-semibold uppercase tracking-wide text-zinc-200">
             O fluxo em uma frase
           </p>
           <p className="mt-1 text-sm text-zinc-400">
-            Você → toca em <span className="text-zinc-200">Instalar</span> na
-            página Extensões → o Grimório baixa o catálogo da extensão → monta os
-            trilhos → você clica num item → o livro/revista abre no leitor (EPUB
-            ou CBZ).
+            Você → toca em <span className="text-zinc-200">Ativar</span> na
+            página Extensões → digita o título na{" "}
+            <span className="text-zinc-200">Busca</span> → o Grimório chama{" "}
+            <span className="text-zinc-200">/api/scrape</span> de cada fonte
+            ativa → clica em “Ler” e o leitor abre em streaming (páginas) ou
+            baixa o arquivo direto (EPUB/CBZ).
           </p>
         </div>
         <p>
-          Nada de cadastro, servidor ou banco de dados. Qualquer pessoa pode
-          publicar um catálogo e a comunidade mantém os próprios acervos.
+          Isso permite acervos gigantes (ex.: o MangaDex inteiro) sem precisar
+          de catálogo estático — a extensão encontra o que você procura no
+          momento em que você procura.
         </p>
       </Section>
 
-      <Section icon={Check} title="Como instalar, passo a passo" id="instalar">
+      <Section icon={Check} title="Como instalar e usar, passo a passo" id="instalar">
         <ol className="space-y-3">
           <Step n={1} title="Abra a página Extensões">
             Use o menu inferior (celular) ou a barra lateral (computador). A
-            página lista automaticamente as extensões disponíveis no diretório.
+            página lista as extensões disponíveis no diretório.
           </Step>
           <Step n={2} title="Escolha uma extensão">
-            Cada card mostra o nome, o ícone e a fonte da comunidade — por
-            exemplo <span className="text-zinc-200">MangaDex</span> (API
-            oficial), <span className="text-zinc-200">Só Quadrinhos</span>{" "}
-            (acervo WordPress), <span className="text-zinc-200">HQ Now</span>{" "}
-            (GraphQL interno) e <span className="text-zinc-200">Baixe Livros</span>{" "}
-            (download direto de EPUB/PDF).
+            Cada card mostra o nome, o ícone e a fonte:{" "}
+            <span className="text-zinc-200">MangaDex</span> (API oficial),{" "}
+            <span className="text-zinc-200">Só Quadrinhos</span> (WordPress),{" "}
+            <span className="text-zinc-200">HQ Now</span> (GraphQL interno) e{" "}
+            <span className="text-zinc-200">Baixe Livros</span> (download direto
+            de EPUB/PDF).
           </Step>
-          <Step n={3} title="Toque em “Instalar”">
-            O Grimório baixa o catálogo na hora e o guarda nos seus repositórios.
-            O botão vira <span className="text-zinc-200">Instalado</span> — nada
-            de colar links manualmente.
+          <Step n={3} title="Toque em “Ativar”">
+            O Grimório apenas <span className="text-zinc-200">registra</span> a
+            extensão no seu dispositivo (localStorage). O chip fica{" "}
+            <span className="text-zinc-200">Ativa</span> — nenhum arquivo é
+            baixado nesta etapa.
           </Step>
-          <Step n={4} title="Confira o status">
-            O repositório aparece na lista com um selo:
-            <ul className="mt-2 space-y-1 pl-1 text-sm">
-              <li>
-                <span className="text-[#d34134]">●</span>{" "}
-                <span className="text-zinc-300">Conectado</span> — o catálogo foi
-                baixado; o selo mostra a versão informada (ex.: v1.2).
-              </li>
-              <li>
-                <span className="text-amber-400">●</span>{" "}
-                <span className="text-zinc-300">Sincronizando</span> — o download
-                está em andamento.
-              </li>
-              <li>
-                <span className="text-red-400">●</span>{" "}
-                <span className="text-zinc-300">Falhou</span> — não foi possível
-                baixar (veja “Solução de problemas”).
-              </li>
-            </ul>
-          </Step>
-          <Step n={5} title="Volte ao Início">
-            Os trilhos do add-on substituem o catálogo de demonstração. Role,
-            escolha um item e toque no card para abrir o leitor.
+          <Step n={4} title="Busque na Início ou na Busca">
+            Digite um termo (ex.: “Berserk”). Cada extensão ativa é consultada e
+            mostra o que encontrou. Clique em{" "}
+            <span className="text-zinc-200">Ler</span> para abrir o leitor.
           </Step>
         </ol>
         <div className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-3">
@@ -205,147 +185,27 @@ export default function GuidePage() {
           </p>
           <ul className="mt-1 list-disc space-y-1 pl-4 text-sm text-zinc-400">
             <li>
-              <span className="text-zinc-200">Sincronizar tudo</span> — atualiza o
-              diretório e recarrega todos os repositórios instalados de uma vez
-              (limpa catálogos que falharam).
+              <span className="text-zinc-200">Desativar</span> — desliga o
+              conector; ele deixa de aparecer na Busca.
             </li>
             <li>
-              <span className="text-zinc-200">Atualizar (ícone ↻)</span> — baixa o
-              catálogo novamente agora (indispensável quando o autor atualiza o
-              conteúdo).
+              <span className="text-zinc-200">Atualizar diretório</span> —
+              recarrega a lista de extensões disponíveis.
             </li>
             <li>
-              <span className="text-zinc-200">Remover (ícone 🗑)</span> — desinstala
-              o add-on. Os trilhos desaparecem na Início.
-            </li>
-            <li>
-              <span className="text-zinc-200">Abrir URL (ícone ↗)</span> — visita o
-              catálogo no navegador, útil para conferir se está no ar.
+              As extensões ativas contam como “fonte ativa” na própria Busca.
             </li>
           </ul>
         </div>
       </Section>
 
-      <Section icon={FileJson} title="Formato do catálogo (esquema)" id="formato">
+      <Section icon={Search} title="Buscar e o formato de streaming" id="buscar">
         <p>
-          Um catálogo segue um esquema simples e aberto (BYOC — “traga seu
-          próprio catálogo”). Ele tem <span className="text-zinc-200">rails</span>{" "}
-          (seções/temas) e cada rail tem <span className="text-zinc-200">itens</span>{" "}
-          (obra + download):
-        </p>
-        <Code>{`{
-  "name": "Acervo do Bardo",
-  "description": "Catálogo de teste da comunidade.",
-  "version": "1.2.0",
-  "rails": [
-    {
-      "id": "mangas",
-      "title": "Mangás",
-      "items": [
-        {
-          "id": "op-cap-1",
-          "type": "cbz",
-          "title": "One Piece — Capítulo 1",
-          "author": "Eiichiro Oda",
-          "year": "1997",
-          "description": "O começo da jornada do Chapéu de Palha.",
-          "cover": "https://exemplo.com/covers/op1.jpg",
-          "tags": ["mangá", "aventura"],
-          "sourceUrl": "https://exemplo.com/downloads/op-cap-1.cbz"
-        },
-        {
-          "id": "o-grimorio-01",
-          "type": "epub",
-          "title": "O Grimório das Sombras",
-          "author": "Uma Autora",
-          "year": "2026",
-          "description": "Romance de fantasia em três atos.",
-          "cover": "https://exemplo.com/covers/grimorio.jpg",
-          "tags": ["fantasia"],
-          "sourceUrl": "https://exemplo.com/downloads/o-grimorio.epub"
-        }
-      ]
-    },
-    {
-      "id": "romances",
-      "title": "Romances & Ficção",
-      "items": [
-        {
-          "id": "1984-fr",
-          "type": "epub",
-          "title": "1984",
-          "author": "George Orwell",
-          "year": "1949",
-          "sourceUrl": "https://exemplo.com/downloads/1984.epub"
-        }
-      ]
-    }
-  ]
-}`}</Code>
-        <div className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-3">
-          <p className="text-xs font-semibold uppercase tracking-wide text-zinc-200">
-            Campos
-          </p>
-          <ul className="mt-1 list-disc space-y-1 pl-4 text-sm text-zinc-400">
-            <li>
-              <span className="text-zinc-200">name</span> (obrigatório) — nome que
-              aparece na lista de Extensões.
-            </li>
-            <li>
-              <span className="text-zinc-200">version</span> (recomendado) — versão
-              do catálogo; aparece no selo e ajuda você e o autor a saber se está
-              atualizado.
-            </li>
-            <li>
-              <span className="text-zinc-200">rails[].title</span> — título da
-              seção exibida na Início.
-            </li>
-            <li>
-              <span className="text-zinc-200">items[].id</span> (obrigatório) — id
-              único e estável da obra; usado para salvar posição de leitura e a
-              Biblioteca.
-            </li>
-            <li>
-              <span className="text-zinc-200">items[].type</span> (obrigatório) —{" "}
-              <span className="text-zinc-200">“epub”</span> (livro baixado),{" "}
-              <span className="text-zinc-200">“cbz”</span> (quadrinho baixado),{" "}
-              <span className="text-zinc-200">“comic”</span> (quadrinho em
-              streaming de páginas via extensão) ou{" "}
-              <span className="text-zinc-200">“book”</span> (livro de biblioteca
-              aberta, arquivo EPUB/PDF estável na web). Se faltar, o Grimório tenta
-              adivinhar pela extensão da URL.
-            </li>
-            <li>
-              <span className="text-zinc-200">items[].sourceUrl</span> (obrigatório)
-              — link para o arquivo <span className="text-zinc-200">.epub</span> ou{" "}
-              <span className="text-zinc-200">.cbz</span>; ou, para{" "}
-              <span className="text-zinc-200">“comic”</span>, um endpoint que
-              responde no formato de streaming abaixo.
-            </li>
-            <li>
-              <span className="text-zinc-200">items[].pages</span> (opcional, para{" "}
-              <span className="text-zinc-200">“comic”</span>) — URLs das páginas
-              embutidas no catálogo, sem precisar de endpoint.
-            </li>
-            <li>
-              <span className="text-zinc-200">items[].title</span> (obrigatório) —
-              título exibido no card.
-            </li>
-            <li>
-              <span className="text-zinc-200">cover</span> (opcional) — imagem da
-              capa. Se faltar, o card mostra um placeholder.
-            </li>
-            <li>
-              <span className="text-zinc-200">author / year / description / tags</span>{" "}
-              (opcionais) — enriquecem o card.
-            </li>
-          </ul>
-        </div>
-        <p>
-          Para itens de streaming (<span className="text-zinc-200">“comic”</span>),
-          o endpoint apontado no <span className="text-zinc-200">sourceUrl</span>{" "}
-          responde com o formato estrito abaixo — o leitor renderiza uma página de
-          cada vez:
+          A <span className="text-zinc-200">Busca</span> é o ponto de entrada do
+          conteúdo. Ela consulta cada extensão ativa chamando{" "}
+          <span className="text-zinc-200">GET /api/scrape?provider=&lt;id&gt;&amp;query=&lt;termo&gt;</span>{" "}
+          e lista lado a lado o que cada fonte retornou. A resposta segue o
+          formato estrito de streaming:
         </p>
         <Code>{`{
   "id": "hq-now:Batman",
@@ -356,88 +216,69 @@ export default function GuidePage() {
     "https://img.provider/pagina-2.jpg"
   ]
 }`}</Code>
-      </Section>
-
-      <Section icon={Globe} title="Onde hospedar um catálogo" id="hospedar">
-        <p>
-          Como o catálogo é um arquivo JSON estático, praticamente qualquer lugar
-          serve:
-        </p>
-        <ul className="list-disc space-y-1 pl-4">
-          <li>
-            <span className="text-zinc-200">GitHub Pages / GitLab Pages</span> —
-            ideal para a comunidade: repo público + `https://usuario.github.io/
-            catalogo.json`.
-          </li>
-          <li>
-            <span className="text-zinc-200">GitHub Gist</span> — perfeito para
-            testes rápidos; use o “raw” do gist.
-          </li>
-          <li>
-            <span className="text-zinc-200">CDNs estáticos</span> — um arquivo
-            dentro de um pacote npm publicado em {`unpkg.com/jsdelivr`} ganha HTTPS
-            de graça.
-          </li>
-          <li>
-            <span className="text-zinc-200">Qualquer host estático</span> —
-            Netlify, Vercel, buckets de nuvem, sua própria VPS. Basta {`HTTPS`}.
-          </li>
-        </ul>
         <div className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-3">
           <p className="text-xs font-semibold uppercase tracking-wide text-zinc-200">
-            Requisitos
+            Campos
           </p>
           <ul className="mt-1 list-disc space-y-1 pl-4 text-sm text-zinc-400">
             <li>
-              Servido via <span className="text-zinc-200">HTTPS</span> (o
-              navegador bloqueia conteúdo misto).
+              <span className="text-zinc-200">id</span> (obrigatório) — id estável;
+              usado para salvar posição de leitura e a Biblioteca.
             </li>
             <li>
-              JSON válido e alcançável no seu dispositivo — se a máquina tiver rede
-              restrita, o add-on só funciona se o host for acessível por ela.
+              <span className="text-zinc-200">title</span> (obrigatório) — título
+              exibido.
             </li>
             <li>
-              Não precisa aceitar CORS: se o host bloquear o acesso direto do
-              navegador, o Grimório baixa por meio do próprio proxy (veja abaixo).
+              <span className="text-zinc-200">type</span> —{" "}
+              <span className="text-zinc-200">“comic”</span> (quadrinho em páginas)
+              ou <span className="text-zinc-200">“book”</span> (livro).
+            </li>
+            <li>
+              <span className="text-zinc-200">pages</span> — URLs das páginas na
+              ordem de leitura.
+            </li>
+            <li>
+              <span className="text-zinc-200">file</span> (opcional) — em vez de
+              páginas, uma URL direta de arquivo binário (EPUB/CBZ), ex.: acervos
+              WordPress. O leitor baixa e renderiza no formato correspondente.
             </li>
           </ul>
         </div>
+        <p>
+          A demonstração da Início (mock) usa o mesmo esquema de{" "}
+          <span className="text-zinc-200">CatalogItem</span> com{" "}
+          <span className="text-zinc-200">pages</span> embutidas — o leitor é o
+          mesmo para tudo.
+        </p>
       </Section>
 
-      <Section icon={Network} title="Como o Grimório baixa tudo" id="como-funciona">
+      <Section icon={Network} title="Como o Grimório consulta as fontes" id="como-funciona">
         <p>
-          Para que qualquer host funcione (mesmo os que bloqueiam CORS), o app usa
-          duas rotas internas:
+          O app usa duas rotas internas para que qualquer fonte funcione (mesmo
+          com CORS bloqueado):
         </p>
         <ol className="list-decimal space-y-1 pl-4">
           <li>
             <span className="text-zinc-200">Proxy anti-CORS</span>{" "}
-            (<span className="text-zinc-200">/api/proxy</span>) — baixa catálogos
-            JSON, EPUBs e CBZs quando o acesso direto do navegador falha.
+            (<span className="text-zinc-200">/api/proxy</span>) — baixa EPUBs e
+            CBZs quando o acesso direto do navegador falha (cache de 10 minutos).
           </li>
           <li>
             <span className="text-zinc-200">Scraper de streaming</span>{" "}
-            (<span className="text-zinc-200">/api/scrape?provider=…&query=…</span>)
-            — cada fonte tem a lógica individual: a busca bate no endpoint real
-            do acervo, lê os elementos visuais (ou captura o arquivo direto) e
-            devolve as páginas no formato de streaming do leitor. Fontes atuais:
-            MangaDex (API oficial), Só Quadrinhos (WordPress), HQ Now (GraphQL
-            interno), Baixe Livros (download direto).
+            (<span className="text-zinc-200">/api/scrape</span>) — cada fonte tem
+            a lógica individual registrada em{" "}
+            <span className="text-zinc-200">lib/scrapers/providers</span>: a busca
+            bate no endpoint real do acervo, lê os elementos visuais (ou captura
+            o arquivo direto) e devolve o streaming. Fontes atuais: MangaDex (API
+            oficial), Só Quadrinhos (WordPress), HQ Now (GraphQL interno), Baixe
+            Livros (download direto).
           </li>
         </ol>
         <p>
-          O comando busca primeiro o diretório e o catálogo; clicou num item de{" "}
-          <span className="text-zinc-200">“comic”</span>, o leitor chama o scraper
-          inline e renderiza página a página. Itens{" "}
-          <span className="text-zinc-200">“book”</span> e{" "}
-          <span className="text-zinc-200">“epub”</span> usam arquivos públicos
-          estáveis (ex.: Project Gutenberg) baixados por meio do proxy.
-        </p>
-        <p>
-          O proxy mantém um <span className="text-zinc-200">cache de 10 minutos</span>{" "}
-          (com revalidação em segundo plano), então catálogos e arquivos
-          re-visitados carregam rápido. Para forçar uma cópia nova, use o botão
-          de atualizar no add-on.
+          Clique em “Ler” e o leitor exibe página a página, ou baixa o arquivo
+          direto e renderiza no formato (EPUB/CBZ) — tudo por meio do proxy quando
+          preciso.
         </p>
         <p className="text-xs text-zinc-500">
           Por segurança, o proxy só acessa URLs http/https, recusa endereços de
@@ -448,70 +289,55 @@ export default function GuidePage() {
 
       <Section icon={BookMarked} title="Testar localmente (sem internet)" id="testar-locally">
         <p>
-          Sua máquina tem rede restrita? Tudo já vem preparado para rodar offline:
+          Sua máquina tem rede restrita? O diretório de extensões já vem embutido:
         </p>
         <ol className="list-decimal space-y-1 pl-4">
           <li>
-            O app embute uma cópia do diretório em{" "}
+            O app serve uma cópia do diretório em{" "}
             <span className="text-zinc-200">public/catalog/extensions-catalog.json</span>{" "}
-            e os catálogos de cada extensão em{" "}
-            <span className="text-zinc-200">public/catalog/catalogs/*.json</span> —
-            o espelho do deploy estático do monorepo{" "}
-            <span className="text-zinc-200">grimorio-catalog</span>.
-          </li>
-          <li>
-            O diretório usa <span className="text-zinc-200">source_url</span>{" "}
-            relativos (ex.: <span className="text-zinc-200">catalogs/hq-now.json</span>);
-            o Grimório os resolve contra a URL do diretório, então funciona igual
-            no dev e na produção.
-          </li>
-          <li>
-            Basta rodar o app e ir em <span className="text-zinc-200">Extensões</span>{" "}
-            → <span className="text-zinc-200">Instalar</span>. Cada fonte tenta a
-            lógica real (MangaDex e HQ Now funcionam mesmo nesta máquina); quando
-            o host está bloqueado (Só Quadrinhos sem DNS, Baixe Livros com
-            Cloudflare), o provedor devolve páginas de exemplo para a leitura
-            continuar demonstrável.
-          </li>
-          <li>
-            Na produção, aponte o app para o diretório real definindo a variável{" "}
+            — o espelho do deploy estático do monorepo{" "}
+            <span className="text-zinc-200">grimorio-catalog</span>. Na produção,
+            aponte a variável{" "}
             <span className="text-zinc-200">NEXT_PUBLIC_EXTENSIONS_CATALOG_URL</span>{" "}
-            (ex.: o deploy estático do catálogo em Vercel).
+            para o diretório real.
+          </li>
+          <li>
+            Cada fonte tenta a lógica real — MangaDex e HQ Now respondem até na
+            rede restrita; quando um host está bloqueado (Só Quadrinhos sem DNS,
+            Baixe Livros com Cloudflare), o provedor devolve páginas de exemplo
+            para a leitura continuar demonstrável.
+          </li>
+          <li>
+            As amostras em <span className="text-zinc-200">/samples/</span>{" "}
+            (epub e cbz) são apenas demonstração offline do leitor binário; o
+            fluxo real de extensões não depende delas.
           </li>
         </ol>
-        <p>
-          As amostras antigas em <span className="text-zinc-200">/samples/</span>{" "}
-          (epub e cbz) permanecem apenas como demonstração offline do leitor
-          binário; o fluxo real de extensões não depende delas.
-        </p>
       </Section>
 
       <Section icon={Bug} title="Solução de problemas" id="problemas">
         <div className="space-y-2">
           <div className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-3">
             <p className="text-sm font-medium text-zinc-100">
-              Status “Falhou” ao adicionar
+              Extensão ativa, mas a busca não retorna
             </p>
             <p className="mt-1 text-sm text-zinc-400">
-              Confira se a URL está completa e com HTTPS; se o servidor está de pé;
-              se o JSON é válido (use um validator); e se o host é acessível pela
-              sua rede. Às vezes um host funciona só via proxy — verifique que a
-              URL não é loopback local nem contém usuário/senha.
+              Verifique a rede: o app precisa alcançar a API da fonte (MangaDex /
+              admin.hq-now.com / WordPress / Cloudflare). Se o host estiver
+              bloqueado, o provedor usa o fallback de páginas de exemplo — confira
+              também o terminal do app (log <span className="text-zinc-200">[…]
+              fallback offline, causa: …</span>) para ver o motivo.
             </p>
           </div>
           <div className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-3">
             <p className="text-sm font-medium text-zinc-100">
-              Catálogo certo, mas itens não abrem
+              Antes o app baixava um “catálogo JSON estático”
             </p>
             <p className="mt-1 text-sm text-zinc-400">
-              Veja o campo <span className="text-zinc-200">type</span> (use apenas{" "}
-              <span className="text-zinc-200">“epub”</span>,{" "}
-              <span className="text-zinc-200">“cbz”</span>,{" "}
-              <span className="text-zinc-200">“comic”</span> ou{" "}
-              <span className="text-zinc-200">“book”</span>) e confirme que o{" "}
-              <span className="text-zinc-200">sourceUrl</span> de fato baixa o
-              arquivo (teste no navegador). Arquivos acima do limite de cache
-              continuam funcionando — só não são cacheados.
+              Isso mudou: as extensões agora são conectores dinâmicos. A instalação
+              só ativa o conector no dispositivo e a Busca chama as APIs ao vivo.
+              Nenhuma extensão precisa (nem deve) depender de manifestos estáticos
+              de conteúdo.
             </p>
           </div>
           <div className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-3">
@@ -519,52 +345,45 @@ export default function GuidePage() {
               As capas não carregam
             </p>
             <p className="mt-1 text-sm text-zinc-400">
-              Capas são opcionais; o Grimório nunca quebra se elas falharem. Se
-              muitas capas não aparecem, o host delas pode estar bloqueado — troque
-              por URLs HTTPS públicas do mesmo host do catálogo.
-            </p>
-          </div>
-          <div className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-3">
-            <p className="text-sm font-medium text-zinc-100">
-              Atualização de conteúdo não aparece
-            </p>
-            <p className="mt-1 text-sm text-zinc-400">
-              O proxy cacha por até 10 minutos. Espere, use o botão ↻ do add-on ou
-              force o autor a publicar no mesmo host/caminho. Por fim, um hard
-              refresh (Ctrl+F5) resolve favicons e telas antigas.
+              Capas são opcionais; o Grimório nunca quebra se elas falharem. Nos
+              resultados da Busca usamos monograma da fonte; dentro do leitor, as
+              páginas vêm do host de origem.
             </p>
           </div>
         </div>
       </Section>
 
-      <Section icon={Sparkles} title="Para quem cria catálogos (boas práticas)" id="criar">
+      <Section icon={Zap} title="Para quem cria conectores (boas práticas)" id="criar">
         <ul className="list-disc space-y-1 pl-4">
           <li>
-            Use <span className="text-zinc-200">ids estáveis</span> — se mudarem,
+            Registre em <span className="text-zinc-200">lib/scrapers/providers</span>{" "}
+            um objeto implementando a interface <span className="text-zinc-200">ScrapeProvider</span>{" "}
+            ({`{ id, name, domain, scrape(query) }`}) e exporte-o no índice — o{" "}
+            <span className="text-zinc-200">/api/scrape</span> roteia por{" "}
+            <span className="text-zinc-200">provider</span>.
+          </li>
+          <li>
+            Retorne <span className="text-zinc-200">id</span> estável — se mudar,
             o histórico de leitura e a Biblioteca perdem referência.
           </li>
           <li>
-            Coloque <span className="text-zinc-200">type</span> explícito (epub,
-            cbz, comic, book) — nunca confie na extensão da URL.
+            Informe sempre <span className="text-zinc-200">pages</span> ou{" "}
+            <span className="text-zinc-200">file</span> — nunca os dois vazios.
           </li>
           <li>
-            Mantenha <span className="text-zinc-200">version</span> semântica e
-            aumente a cada mudança; os usuários sabem quando atualizar.
+            Em <span className="text-zinc-200">type</span>, use{" "}
+            <span className="text-zinc-200">“comic”</span> (páginas) ou{" "}
+            <span className="text-zinc-200">“book”</span> (arquivo) — nunca deixe o
+            leitor adivinhar.
           </li>
           <li>
-            Hospede catálogo e conteúdos{' '}
-            <span className="text-zinc-200">no mesmo host</span> sempre que
-            possível.
-          </li>
-          <li>
-            Publique o esquema no README do repositório para incentivar o uso da
-            comunidade.
+            Ao detectar conexão bloqueada na sua rede, devolva um fallback
+            demonstrável em vez de erro cru — mas logue a causa no console.
           </li>
         </ul>
         <p>
-          O Grimório não valida a procedência dos arquivos: você só deve adicionar
-          catálogos de fontes em que confia, como em qualquer agregador de
-          conteúdo.
+          O Grimório não valida a procedência do conteúdo: você só deve ativar
+          extensões de fontes em que confia, como em qualquer agregador.
         </p>
       </Section>
 
@@ -573,8 +392,8 @@ export default function GuidePage() {
           href="/addons"
           className="inline-flex items-center gap-2 rounded-lg bg-[#d34134] px-5 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90"
         >
-          <Link2 className="size-4" />
-          Ir para Extensões e instalar
+          <BookOpen className="size-4" />
+          Ir para Extensões e ativar
         </Link>
       </footer>
     </div>

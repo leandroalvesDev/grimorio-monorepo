@@ -61,7 +61,7 @@ export default function HomePage() {
               <input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Buscar mangá, HQ ou livro… (MangaDex, HQ Now, Só Quadrinhos, Baixe Livros)"
+                placeholder="Buscar mangá, HQ ou livro… (MangaDex, Comick, Guardiões do Globo, Baixe Livros)"
                 aria-label="Buscar na estante"
                 className="w-full rounded-full border border-white/10 bg-white/[0.04] py-3 pl-10 pr-4 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-[#d34134]/50 focus:outline-none focus:ring-2 focus:ring-[#d34134]/30"
               />

@@ -125,10 +125,10 @@ export default function AddonsPage() {
               <p className="mt-2 max-w-2xl text-sm leading-relaxed text-zinc-400">
                 Uma extensão é um{" "}
                 <span className="text-zinc-200">conector dinâmico</span>: ativada,
-                ela passa a responder à Busca em tempo real (API oficial do
-                MangaDex, GraphQL do HQ Now, WordPress do Só Quadrinhos, download
-                direto do Baixe Livros). Nada de arquivos estáticos — os
-                resultados chegam ao vivo ao digitar.
+                ela passa a responder à Busca em tempo real — APIs diretas
+                (MangaDex, Comick) e fontes web (Guardiões do Globo, Baixe
+                Livros). Nada de arquivos estáticos — os resultados chegam ao
+                vivo ao digitar.
               </p>
             </div>
             <Button
@@ -158,6 +158,11 @@ export default function AddonsPage() {
                 Busca
               </a>{" "}
               ou na barra do Início e veja o que a fonte encontra na hora.
+            </span>
+
+            <span className="mt-1 block text-xs text-zinc-400">
+              Fontes atuais: MangaDex e Comick (via API), Guardiões do Globo
+              (HQs brasileiras) e Baixe Livros (download direto).
             </span>
           </div>
 

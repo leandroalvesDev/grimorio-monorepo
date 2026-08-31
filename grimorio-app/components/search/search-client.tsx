@@ -149,7 +149,8 @@ export function SearchClient({ initialQuery }: { initialQuery: string }) {
             <p className="mt-2 text-sm leading-relaxed text-zinc-400">
               A busca consulta, em tempo real, cada extensão{" "}
               <span className="text-zinc-200">ativa</span> no
-              dispositivo — MangaDex, HQ Now, Só Quadrinhos e Baixe Livros.
+              dispositivo — MangaDex, Comick, Guardiões do Globo e Baixe
+              Livros.
               Ative conectores em{" "}
               <Link href="/addons" className="text-[#ff5a4e] hover:underline">
                 Extensões
@@ -227,7 +228,7 @@ export function SearchClient({ initialQuery }: { initialQuery: string }) {
             </p>
             <p className="mx-auto mt-1 max-w-xs text-xs leading-relaxed text-zinc-500">
               {active.length === 0
-                ? "Ative MangaDex, HQ Now, Só Quadrinhos ou Baixe Livros em Extensões para buscar."
+                ? "Ative MangaDex, Comick, Guardiões do Globo ou Baixe Livros em Extensões para buscar."
                 : "Busque por um mangá, HQ ou livro e veja o que cada fonte encontra."}
             </p>
             {active.length === 0 && (

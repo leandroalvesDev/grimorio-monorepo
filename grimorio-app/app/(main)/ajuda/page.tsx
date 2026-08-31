@@ -74,8 +74,8 @@ export default function GuidePage() {
           O Grimório é uma <span className="text-zinc-200">prateleira vazia</span>:
           ele não guarda conteúdo. Tudo o que você busca vem de{" "}
           <span className="text-zinc-200">extensões da comunidade</span> —
-          conectores dinâmicos que consultam as fontes em tempo real (API
-          oficial do MangaDex, HQ Now, Só Quadrinhos e Baixe Livros). Este guia
+          conectores dinâmicos que consultam as fontes em tempo real (APIs do
+          MangaDex e Comick, Guardiões do Globo e Baixe Livros). Este guia
           explica o que é um add-on e como usar o seu.
         </p>
         <div className="mt-6 flex flex-wrap gap-2">
@@ -162,8 +162,9 @@ export default function GuidePage() {
           <Step n={2} title="Escolha uma extensão">
             Cada card mostra o nome, o ícone e a fonte:{" "}
             <span className="text-zinc-200">MangaDex</span> (API oficial),{" "}
-            <span className="text-zinc-200">Só Quadrinhos</span> (WordPress),{" "}
-            <span className="text-zinc-200">HQ Now</span> (GraphQL interno) e{" "}
+            <span className="text-zinc-200">Comick</span> (API completa de HQs
+            e mangás), <span className="text-zinc-200">Guardiões do Globo</span>{" "}
+            (HQs brasileiras) e{" "}
             <span className="text-zinc-200">Baixe Livros</span> (download direto
             de EPUB/PDF).
           </Step>
@@ -271,7 +272,7 @@ export default function GuidePage() {
             <span className="text-zinc-200">lib/scrapers/providers</span>: a busca
             bate no endpoint real do acervo, lê os elementos visuais (ou captura
             o arquivo direto) e devolve o streaming. Fontes atuais: MangaDex (API
-            oficial), Só Quadrinhos (WordPress), HQ Now (GraphQL interno), Baixe
+            oficial), Comick (API JSON), Guardiões do Globo (HTML de HQs), Baixe
             Livros (download direto).
           </li>
         </ol>
@@ -302,10 +303,10 @@ export default function GuidePage() {
             para o diretório real.
           </li>
           <li>
-            Cada fonte tenta a lógica real — MangaDex e HQ Now respondem até na
-            rede restrita; quando um host está bloqueado (Só Quadrinhos sem DNS,
-            Baixe Livros com Cloudflare), o provedor devolve páginas de exemplo
-            para a leitura continuar demonstrável.
+            Cada fonte tenta a lógica real — MangaDex e Comick respondem via
+            API até na rede restrita; quando um host está bloqueado (Guardiões
+            do Globo sem DNS, Baixe Livros com Cloudflare), o provedor devolve
+            páginas de exemplo para a leitura continuar demonstrável.
           </li>
           <li>
             As amostras em <span className="text-zinc-200">/samples/</span>{" "}
@@ -323,7 +324,7 @@ export default function GuidePage() {
             </p>
             <p className="mt-1 text-sm text-zinc-400">
               Verifique a rede: o app precisa alcançar a API da fonte (MangaDex /
-              admin.hq-now.com / WordPress / Cloudflare). Se o host estiver
+              api.comick.io / blog do Guardiões / Cloudflare do Baixe Livros). Se o host estiver
               bloqueado, o provedor usa o fallback de páginas de exemplo — confira
               também o terminal do app (log <span className="text-zinc-200">[…]
               fallback offline, causa: …</span>) para ver o motivo.

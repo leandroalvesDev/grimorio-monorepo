@@ -48,9 +48,16 @@ export const mangadexProvider: ScrapeProvider = {
 };
 
 async function searchFirstChapter(query: string): Promise<StreamingMedia> {
-  const search = await httpGetJson<{ data?: MangaResult[] }>(
-    `${API}/manga?title=${encodeURIComponent(query)}&includes[]=cover_art&limit=10`
-  );
+  // Prefere obras com tradução em pt-br; se não houver, busca em todas as
+  // línguas (MangaDex ainda pode entregar por título em EN/JP).
+  const searchUrl = (langFilter: boolean) =>
+    `${API}/manga?title=${encodeURIComponent(query)}&includes[]=cover_art&limit=10${
+      langFilter ? "&availableTranslatedLanguage[]=pt-br" : ""
+    }`;
+  let search = await httpGetJson<{ data?: MangaResult[] }>(searchUrl(true));
+  if (!search?.data?.length) {
+    search = await httpGetJson<{ data?: MangaResult[] }>(searchUrl(false));
+  }
   const normalized = query.trim().toLowerCase();
   // Prioriza título exato, depois começo-de-frase, depois qualquer ocorrência.
   const candidates = (search.data ?? []).map((m) => {

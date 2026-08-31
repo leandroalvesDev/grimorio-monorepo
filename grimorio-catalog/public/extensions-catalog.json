@@ -2,20 +2,20 @@
   {
     "id": "mangadex",
     "name": "MangaDex",
-    "description": "Mangás em streaming via API oficial do MangaDex.",
+    "description": "Mangás e HQs em streaming via API oficial do MangaDex (prioriza tradução pt-br).",
     "icon": "manga"
   },
   {
-    "id": "so-quadrinhos",
-    "name": "Só Quadrinhos",
-    "description": "Quadrinhos de acervo WordPress: leitor sequencial ou link direto (.cbz/.pdf).",
-    "icon": "hq"
+    "id": "comick",
+    "name": "Comick",
+    "description": "HQs e mangás via API do Comick: busca, capítulos e imagens 100% JSON.",
+    "icon": "ck"
   },
   {
-    "id": "hq-now",
-    "name": "HQ Now",
-    "description": "HQs via API interna GraphQL do HQ Now.",
-    "icon": "sq"
+    "id": "guardioes-do-globo",
+    "name": "Guardiões do Globo",
+    "description": "HQs brasileiras (Invencível, Guardiões do Globo etc.) via blog de scans em HTML.",
+    "icon": "gg"
   },
   {
     "id": "baixe-livros",

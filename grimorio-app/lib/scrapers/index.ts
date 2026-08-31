@@ -1,14 +1,14 @@
 import type { StreamingMedia } from "@/lib/types";
 import { baixeLivrosProvider } from "./providers/baixe-livros";
-import { hqNowProvider } from "./providers/hq-now";
+import { comickProvider } from "./providers/comick";
+import { guardioesGloboProvider } from "./providers/guardioes-globo";
 import { mangadexProvider } from "./providers/mangadex";
-import { soQuadrinhosProvider } from "./providers/so-quadrinhos";
 import type { ScrapeProvider } from "./types";
 
 const providers: Record<string, ScrapeProvider> = {
   [mangadexProvider.id]: mangadexProvider,
-  [soQuadrinhosProvider.id]: soQuadrinhosProvider,
-  [hqNowProvider.id]: hqNowProvider,
+  [comickProvider.id]: comickProvider,
+  [guardioesGloboProvider.id]: guardioesGloboProvider,
   [baixeLivrosProvider.id]: baixeLivrosProvider,
 };
 

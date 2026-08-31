@@ -1,0 +1,9 @@
+{
+  "name": "grimorio-catalog",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Diretório estático de extensões do Grimório (deploy Vercel).",
+  "scripts": {
+    "build": "node -e \"require('node:fs').cpSync('public', 'dist', { recursive: true })\""
+  }
+}

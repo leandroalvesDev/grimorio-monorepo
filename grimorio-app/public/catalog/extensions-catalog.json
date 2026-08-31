@@ -1,0 +1,23 @@
+[
+  {
+    "id": "hq-now",
+    "name": "HQ Now",
+    "description": "Quadrinhos e HQs atualizadas toda semana.",
+    "icon": "hq",
+    "source_url": "http://localhost:3000/samples/catalogs/hq-now.json"
+  },
+  {
+    "id": "livros-livres",
+    "name": "Livros Livres",
+    "description": "Domínio público e clássicos da literatura em EPUB.",
+    "icon": "livros",
+    "source_url": "http://localhost:3000/samples/catalogs/livros-livres.json"
+  },
+  {
+    "id": "manga-teste",
+    "name": "Manga Teste",
+    "description": "Mangás em CBZ para validar o leitor de quadrinhos.",
+    "icon": "manga",
+    "source_url": "http://localhost:3000/samples/catalogs/manga-teste.json"
+  }
+]

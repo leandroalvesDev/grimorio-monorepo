@@ -1,9 +1,11 @@
 import { BottomNav } from "./bottom-nav";
+import { SeedExtensions } from "./seed-extensions";
 import { Sidebar } from "./sidebar";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-[100dvh] bg-zinc-950 text-zinc-100">
+      <SeedExtensions />
       <div
         aria-hidden
         className="bg-ambient pointer-events-none fixed inset-0 -z-10"

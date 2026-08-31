@@ -15,6 +15,12 @@ export interface StreamingMedia {
    * (EPUB ou CBZ) extraída pela fonte (ex.: acervos WordPress).
    */
   file?: string;
+  /**
+   * `true` quando o conector não conseguiu acessar a fonte nesta rede e
+   * devolveu páginas/arquivos de demonstração — a UI não deve apresentar
+   * como um resultado real.
+   */
+  placeholder?: boolean;
 }
 
 export interface CatalogItem {

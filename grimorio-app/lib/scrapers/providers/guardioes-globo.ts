@@ -49,6 +49,7 @@ export const guardioesGloboProvider: ScrapeProvider = {
         title: query,
         type: "comic",
         pages,
+        placeholder: true,
       };
     }
   },

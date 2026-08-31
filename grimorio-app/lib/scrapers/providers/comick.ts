@@ -60,6 +60,7 @@ export const comickProvider: ScrapeProvider = {
         title: query,
         type: "comic",
         pages,
+        placeholder: true,
       };
     }
   },

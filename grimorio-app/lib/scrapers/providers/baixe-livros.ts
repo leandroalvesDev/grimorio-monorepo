@@ -40,7 +40,8 @@ export const baixeLivrosProvider: ScrapeProvider = {
       };
     } catch (err) {
       console.error("[baixe-livros] fallback offline, causa:", err);
-      // Fallback: EPUB público estável da biblioteca aberta (Gutenberg).
+      // Fallback: só devolve um exemplo quando o termo casa com um clássico
+      // conhecido; senão é "sem resultado" de verdade (nada de livro errado).
       const classics: Record<string, { title: string; file: string }> = {
         "dom casmurro": {
           title: "Dom Casmurro",
@@ -55,8 +56,10 @@ export const baixeLivrosProvider: ScrapeProvider = {
           file: "https://www.gutenberg.org/cache/epub/2701/pg2701-images.epub",
         },
       };
-      const entry =
-        classics[query.trim().toLowerCase()] ?? classics["pride and prejudice"];
+      const entry = classics[query.trim().toLowerCase()];
+      if (!entry) {
+        throw new Error("Baixe Livros: nenhum livro encontrado.");
+      }
 
       return {
         id: `baixe-livros:${query}`,
@@ -64,6 +67,7 @@ export const baixeLivrosProvider: ScrapeProvider = {
         type: "book",
         pages: [],
         file: entry.file,
+        placeholder: true,
       };
     }
   },

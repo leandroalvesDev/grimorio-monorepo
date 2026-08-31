@@ -309,6 +309,11 @@ function ResultRow({ result }: { result: ProviderResult }) {
         </p>
         <p className="mt-0.5 truncate text-sm font-medium text-zinc-100">
           {media.title}
+          {media.placeholder && (
+            <span className="ml-2 rounded-full border border-amber-400/25 bg-amber-400/10 px-2 py-0.5 text-[10px] font-medium text-amber-300">
+              exemplo
+            </span>
+          )}
         </p>
         <p className="mt-0.5 truncate text-xs text-zinc-500">
           {formatMeta(media)}
@@ -348,7 +353,9 @@ function Monogram({
 
 function formatMeta(media: StreamingMedia): string {
   const parts: string[] = [];
-  if (media.pages?.length) {
+  if (media.placeholder) {
+    parts.push("fonte não respondeu nesta rede — este é um conteúdo de exemplo");
+  } else if (media.pages?.length) {
     parts.push(
       `${media.pages.length} página${media.pages.length === 1 ? "" : "s"}`
     );

@@ -22,9 +22,30 @@ interface PagesViewProps {
  * Visualizador de mídia sequencial em streaming: recebe a lista de URLs de
  * páginas do formato `StreamingMedia` e renderiza imagem a imagem.
  */
+/**
+ * URLs de imagem vindas da fonte são roteadas pelo `/api/proxy` do próprio
+ * app: o servidor baixa e serve a página (com cache). Assim a leitura não
+ * depende de o navegador alcançar o CDN da fonte — mesma ideia do streaming
+ * do Stremio, em que o conteúdo passa pelo servidor.
+ */
+function proxiedPageUrl(url: string): string {
+  if (url.startsWith("/")) return url;
+  if (typeof window === "undefined") return url;
+  try {
+    const u = new URL(url, window.location.origin);
+    if (u.origin === window.location.origin) return url;
+  } catch {
+    return url;
+  }
+  return `/api/proxy?url=${encodeURIComponent(url)}`;
+}
+
 export const PagesView = forwardRef<ReaderHandle, PagesViewProps>(
   function PagesView({ pages, initialPosition, onProgress, onError }, ref) {
-    const safePages = useMemo(() => pages.filter(Boolean), [pages]);
+    const safePages = useMemo(
+      () => pages.filter(Boolean).map(proxiedPageUrl),
+      [pages]
+    );
     const [pageIdx, setPageIdx] = useState(() => {
       const saved = initialPosition?.page;
       return Math.min(

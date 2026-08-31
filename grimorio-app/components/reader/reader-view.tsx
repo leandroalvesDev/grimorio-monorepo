@@ -92,6 +92,7 @@ export function ReaderView({
   const [file, setFile] = useState<ArrayBuffer | null>(null);
   const [fileKind, setFileKind] = useState<"epub" | "cbz" | null>(null);
   const [pages, setPages] = useState<string[] | null>(null);
+  const [placeholderNotice, setPlaceholderNotice] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [currentProgress, setCurrentProgress] = useState(0);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -136,6 +137,7 @@ export function ReaderView({
     setErrorMsg(null);
     setPages(null);
     setFileKind(null);
+    setPlaceholderNotice(false);
 
     const cleanup = () => {
       cancelled = true;
@@ -173,6 +175,7 @@ export function ReaderView({
             if (cancelled) return;
             setFileKind(kind);
             setFile(ab);
+            setPlaceholderNotice(Boolean(media.placeholder));
             setStatus("ready");
             return;
           }
@@ -181,6 +184,7 @@ export function ReaderView({
             throw new Error("A extensão não devolveu páginas.");
           }
           setPages(media.pages);
+          setPlaceholderNotice(Boolean(media.placeholder));
           setStatus("ready");
           return;
         }
@@ -314,6 +318,12 @@ export function ReaderView({
 
       {status === "ready" && (pages || file) && item && (
         <>
+          {placeholderNotice && (
+            <div className="pointer-events-none absolute left-1/2 top-3 z-20 -translate-x-1/2 rounded-full border border-amber-400/25 bg-black/80 px-3 py-1 text-center text-[10px] font-medium text-amber-300 backdrop-blur">
+              Conteúdo de exemplo — a fonte não respondeu nesta rede; está
+              lendo a demonstração.
+            </div>
+          )}
           {pages ? (
             <PagesView ref={rendererRef} pages={pages} {...rendererProps} />
           ) : fileKind === "epub" ? (

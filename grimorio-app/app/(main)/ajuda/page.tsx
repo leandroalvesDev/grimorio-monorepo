@@ -162,8 +162,12 @@ export default function GuidePage() {
             página lista automaticamente as extensões disponíveis no diretório.
           </Step>
           <Step n={2} title="Escolha uma extensão">
-            Cada card mostra o nome, o ícone e um catálogo da comunidade (HQ Now,
-            Livros Livres, Manga Teste — ou o que o diretório anunciar).
+            Cada card mostra o nome, o ícone e a fonte da comunidade — por
+            exemplo <span className="text-zinc-200">MangaDex</span> (API
+            oficial), <span className="text-zinc-200">Só Quadrinhos</span>{" "}
+            (acervo WordPress), <span className="text-zinc-200">HQ Now</span>{" "}
+            (GraphQL interno) e <span className="text-zinc-200">Baixe Livros</span>{" "}
+            (download direto de EPUB/PDF).
           </Step>
           <Step n={3} title="Toque em “Instalar”">
             O Grimório baixa o catálogo na hora e o guarda nos seus repositórios.
@@ -200,6 +204,11 @@ export default function GuidePage() {
             Gerenciar
           </p>
           <ul className="mt-1 list-disc space-y-1 pl-4 text-sm text-zinc-400">
+            <li>
+              <span className="text-zinc-200">Sincronizar tudo</span> — atualiza o
+              diretório e recarrega todos os repositórios instalados de uma vez
+              (limpa catálogos que falharam).
+            </li>
             <li>
               <span className="text-zinc-200">Atualizar (ícone ↻)</span> — baixa o
               catálogo novamente agora (indispensável quando o autor atualiza o
@@ -298,19 +307,29 @@ export default function GuidePage() {
             </li>
             <li>
               <span className="text-zinc-200">items[].type</span> (obrigatório) —{" "}
-              <span className="text-zinc-200">“epub”</span> ou{" "}
-              <span className="text-zinc-200">“cbz”</span> (quadrinhos). Se
-              faltar, o Grimório tenta adivinhar pela extensão da URL.
+              <span className="text-zinc-200">“epub”</span> (livro baixado),{" "}
+              <span className="text-zinc-200">“cbz”</span> (quadrinho baixado),{" "}
+              <span className="text-zinc-200">“comic”</span> (quadrinho em
+              streaming de páginas via extensão) ou{" "}
+              <span className="text-zinc-200">“book”</span> (livro de biblioteca
+              aberta, arquivo EPUB/PDF estável na web). Se faltar, o Grimório tenta
+              adivinhar pela extensão da URL.
+            </li>
+            <li>
+              <span className="text-zinc-200">items[].sourceUrl</span> (obrigatório)
+              — link para o arquivo <span className="text-zinc-200">.epub</span> ou{" "}
+              <span className="text-zinc-200">.cbz</span>; ou, para{" "}
+              <span className="text-zinc-200">“comic”</span>, um endpoint que
+              responde no formato de streaming abaixo.
+            </li>
+            <li>
+              <span className="text-zinc-200">items[].pages</span> (opcional, para{" "}
+              <span className="text-zinc-200">“comic”</span>) — URLs das páginas
+              embutidas no catálogo, sem precisar de endpoint.
             </li>
             <li>
               <span className="text-zinc-200">items[].title</span> (obrigatório) —
               título exibido no card.
-            </li>
-            <li>
-              <span className="text-zinc-200">items[].sourceUrl</span> (obrigatório)
-              — link direto para o arquivo <span className="text-zinc-200">.epub</span>{" "}
-              ou <span className="text-zinc-200">.cbz</span>. É o que o leitor
-              baixa para abrir a obra.
             </li>
             <li>
               <span className="text-zinc-200">cover</span> (opcional) — imagem da
@@ -322,6 +341,21 @@ export default function GuidePage() {
             </li>
           </ul>
         </div>
+        <p>
+          Para itens de streaming (<span className="text-zinc-200">“comic”</span>),
+          o endpoint apontado no <span className="text-zinc-200">sourceUrl</span>{" "}
+          responde com o formato estrito abaixo — o leitor renderiza uma página de
+          cada vez:
+        </p>
+        <Code>{`{
+  "id": "hq-now:Batman",
+  "title": "Batman",
+  "type": "comic",
+  "pages": [
+    "https://img.provider/pagina-1.jpg",
+    "https://img.provider/pagina-2.jpg"
+  ]
+}`}</Code>
       </Section>
 
       <Section icon={Globe} title="Onde hospedar um catálogo" id="hospedar">
@@ -373,20 +407,32 @@ export default function GuidePage() {
       <Section icon={Network} title="Como o Grimório baixa tudo" id="como-funciona">
         <p>
           Para que qualquer host funcione (mesmo os que bloqueiam CORS), o app usa
-          duas rotas:
+          duas rotas internas:
         </p>
         <ol className="list-decimal space-y-1 pl-4">
           <li>
-            <span className="text-zinc-200">Tentativa direta</span> — o navegador
-            busca o JSON/fonte direto na URL.
+            <span className="text-zinc-200">Proxy anti-CORS</span>{" "}
+            (<span className="text-zinc-200">/api/proxy</span>) — baixa catálogos
+            JSON, EPUBs e CBZs quando o acesso direto do navegador falha.
           </li>
           <li>
-            <span className="text-zinc-200">Proxy anti-CORS</span> — se a tentativa
-            direta falhar, a URL é enviada ao endpoint interno{" "}
-            <span className="text-zinc-200">/api/proxy</span> do Grimório, que faz
-            a requisição no lugar do navegador e devolve o conteúdo.
+            <span className="text-zinc-200">Scraper de streaming</span>{" "}
+            (<span className="text-zinc-200">/api/scrape?provider=…&query=…</span>)
+            — cada fonte tem a lógica individual: a busca bate no endpoint real
+            do acervo, lê os elementos visuais (ou captura o arquivo direto) e
+            devolve as páginas no formato de streaming do leitor. Fontes atuais:
+            MangaDex (API oficial), Só Quadrinhos (WordPress), HQ Now (GraphQL
+            interno), Baixe Livros (download direto).
           </li>
         </ol>
+        <p>
+          O comando busca primeiro o diretório e o catálogo; clicou num item de{" "}
+          <span className="text-zinc-200">“comic”</span>, o leitor chama o scraper
+          inline e renderiza página a página. Itens{" "}
+          <span className="text-zinc-200">“book”</span> e{" "}
+          <span className="text-zinc-200">“epub”</span> usam arquivos públicos
+          estáveis (ex.: Project Gutenberg) baixados por meio do proxy.
+        </p>
         <p>
           O proxy mantém um <span className="text-zinc-200">cache de 10 minutos</span>{" "}
           (com revalidação em segundo plano), então catálogos e arquivos
@@ -408,14 +454,24 @@ export default function GuidePage() {
           <li>
             O app embute uma cópia do diretório em{" "}
             <span className="text-zinc-200">public/catalog/extensions-catalog.json</span>{" "}
-            e catálogos de exemplo em{" "}
-            <span className="text-zinc-200">public/samples/catalogs/*.json</span>.
+            e os catálogos de cada extensão em{" "}
+            <span className="text-zinc-200">public/catalog/catalogs/*.json</span> —
+            o espelho do deploy estático do monorepo{" "}
+            <span className="text-zinc-200">grimorio-catalog</span>.
           </li>
           <li>
-            Basta rodar o Grimório e ir em{" "}
-            <span className="text-zinc-200">Extensões</span> → tocar em{" "}
-            <span className="text-zinc-200">Instalar</span>. Os botões já vêm
-            apontando para esses arquivos locais do mesmo domínio.
+            O diretório usa <span className="text-zinc-200">source_url</span>{" "}
+            relativos (ex.: <span className="text-zinc-200">catalogs/hq-now.json</span>);
+            o Grimório os resolve contra a URL do diretório, então funciona igual
+            no dev e na produção.
+          </li>
+          <li>
+            Basta rodar o app e ir em <span className="text-zinc-200">Extensões</span>{" "}
+            → <span className="text-zinc-200">Instalar</span>. Cada fonte tenta a
+            lógica real (MangaDex e HQ Now funcionam mesmo nesta máquina); quando
+            o host está bloqueado (Só Quadrinhos sem DNS, Baixe Livros com
+            Cloudflare), o provedor devolve páginas de exemplo para a leitura
+            continuar demonstrável.
           </li>
           <li>
             Na produção, aponte o app para o diretório real definindo a variável{" "}
@@ -424,10 +480,9 @@ export default function GuidePage() {
           </li>
         </ol>
         <p>
-          Os <span className="text-zinc-200">sourceUrl</span> das amostras usam as
-          obras em <span className="text-zinc-200">/samples/</span> (epub e cbz),
-          então o download nem passa pelo proxy (que bloqueia loopback para URLs
-          externas). É o jeito mais rápido de entender o esquema na prática.
+          As amostras antigas em <span className="text-zinc-200">/samples/</span>{" "}
+          (epub e cbz) permanecem apenas como demonstração offline do leitor
+          binário; o fluxo real de extensões não depende delas.
         </p>
       </Section>
 
@@ -450,8 +505,10 @@ export default function GuidePage() {
             </p>
             <p className="mt-1 text-sm text-zinc-400">
               Veja o campo <span className="text-zinc-200">type</span> (use apenas{" "}
-              <span className="text-zinc-200">“epub”</span> ou{" "}
-              <span className="text-zinc-200">“cbz”</span>) e confirme que o{" "}
+              <span className="text-zinc-200">“epub”</span>,{" "}
+              <span className="text-zinc-200">“cbz”</span>,{" "}
+              <span className="text-zinc-200">“comic”</span> ou{" "}
+              <span className="text-zinc-200">“book”</span>) e confirme que o{" "}
               <span className="text-zinc-200">sourceUrl</span> de fato baixa o
               arquivo (teste no navegador). Arquivos acima do limite de cache
               continuam funcionando — só não são cacheados.
@@ -487,8 +544,8 @@ export default function GuidePage() {
             o histórico de leitura e a Biblioteca perdem referência.
           </li>
           <li>
-            Coloque <span className="text-zinc-200">type</span> explícito (epub /
-            cbz) — nunca confie na extensão da URL.
+            Coloque <span className="text-zinc-200">type</span> explícito (epub,
+            cbz, comic, book) — nunca confie na extensão da URL.
           </li>
           <li>
             Mantenha <span className="text-zinc-200">version</span> semântica e

@@ -81,11 +81,13 @@ export default function AddonsPage() {
   const addRepository = useReaderStore((s) => s.addRepository);
   const refreshRepository = useReaderStore((s) => s.refreshRepository);
   const removeRepository = useReaderStore((s) => s.removeRepository);
+  const syncAll = useReaderStore((s) => s.syncAll);
 
   const [extensions, setExtensions] = useState<Extension[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [installing, setInstalling] = useState<Record<string, boolean>>({});
+  const [syncingAll, setSyncingAll] = useState(false);
 
   const fetchList = useCallback(async () => {
     setLoading(true);
@@ -149,6 +151,26 @@ export default function AddonsPage() {
     }
   }
 
+  async function handleSyncAll() {
+    if (syncingAll) return;
+    setSyncingAll(true);
+    try {
+      await fetchList();
+      const result = await syncAll();
+      if (result.failed > 0) {
+        setError(
+          `${result.failed} repositório(s) falharam ao sincronizar.`
+        );
+      }
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Falha ao sincronizar tudo."
+      );
+    } finally {
+      setSyncingAll(false);
+    }
+  }
+
   return (
     <div>
       <header className="relative overflow-hidden border-b border-white/5">
@@ -171,16 +193,30 @@ export default function AddonsPage() {
                 pastas locais.
               </p>
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              className="shrink-0 gap-2"
-              disabled={loading}
-              onClick={fetchList}
-            >
-              <RefreshCw className={cn("size-3.5", loading && "animate-spin")} />
-              Atualizar diretório
-            </Button>
+            <div className="flex shrink-0 flex-wrap gap-2">
+              <Button
+                variant="default"
+                size="sm"
+                className="shrink-0 gap-2"
+                disabled={syncingAll || loading || repositories.length === 0}
+                onClick={handleSyncAll}
+              >
+                <RefreshCw
+                  className={cn("size-3.5", syncingAll && "animate-spin")}
+                />
+                Sincronizar tudo
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="shrink-0 gap-2"
+                disabled={loading}
+                onClick={fetchList}
+              >
+                <RefreshCw className={cn("size-3.5", loading && "animate-spin")} />
+                Atualizar diretório
+              </Button>
+            </div>
           </div>
           <a
             href="/ajuda"

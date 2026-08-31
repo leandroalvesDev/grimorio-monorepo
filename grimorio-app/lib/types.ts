@@ -1,11 +1,33 @@
-export type CatalogItemType = "epub" | "cbz";
+export type CatalogItemType = "epub" | "cbz" | "comic" | "book";
+
+/**
+ * Formato de streaming de mídia sequencial retornado por uma extensão
+ * quando o app solicita um quadrinho/livro específico.
+ */
+export interface StreamingMedia {
+  id: string;
+  title: string;
+  type: "comic" | "book";
+  /** URLs das páginas (imagens) na ordem de leitura. */
+  pages: string[];
+  /**
+   * Alternativa às páginas: URL direta de um arquivo binário hospedado
+   * (EPUB ou CBZ) extraída pela fonte (ex.: acervos WordPress).
+   */
+  file?: string;
+}
 
 export interface CatalogItem {
   id: string;
   type: CatalogItemType;
   title: string;
-  /** URL do arquivo (EPUB ou CBZ) que o leitor vai baixar. */
+  /**
+   * URL do arquivo (EPUB/CBZ) que o leitor vai baixar OU, para itens
+   * "comic", o endpoint de streaming que responde com `StreamingMedia`.
+   */
   sourceUrl: string;
+  /** Páginas embutidas (streaming direto, sem endpoint). */
+  pages?: string[];
   cover?: string;
   author?: string;
   description?: string;

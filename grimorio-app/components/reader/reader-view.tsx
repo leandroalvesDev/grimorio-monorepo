@@ -10,11 +10,12 @@ import {
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { mockCatalog } from "@/lib/mock-catalog";
-import { fetchFile } from "@/lib/read-file";
-import type { CatalogItem } from "@/lib/types";
+import { fetchFile, fetchJson } from "@/lib/read-file";
+import type { CatalogItem, StreamingMedia } from "@/lib/types";
 import { useReaderStore } from "@/store/reader-store";
 import { CbzView } from "./cbz-view";
 import { EpubView } from "./epub-view";
+import { PagesView } from "./pages-view";
 import { ReaderMenu } from "./reader-menu";
 import type { ReaderHandle, ReaderPosition } from "./types";
 
@@ -22,6 +23,12 @@ interface ReaderViewProps {
   itemId: string;
   repoId?: string;
   fallbackUrl?: string;
+}
+
+function binaryKindFromUrl(url: string): "epub" | "cbz" | null {
+  if (/\.epub(\?|$)/i.test(url)) return "epub";
+  if (/\.(cbz|zip)(\?|$)/i.test(url)) return "cbz";
+  return null;
 }
 
 export function ReaderView({ itemId, repoId, fallbackUrl }: ReaderViewProps) {
@@ -80,6 +87,8 @@ export function ReaderView({ itemId, repoId, fallbackUrl }: ReaderViewProps) {
     "loading"
   );
   const [file, setFile] = useState<ArrayBuffer | null>(null);
+  const [fileKind, setFileKind] = useState<"epub" | "cbz" | null>(null);
+  const [pages, setPages] = useState<string[] | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [currentProgress, setCurrentProgress] = useState(0);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -115,31 +124,86 @@ export function ReaderView({ itemId, repoId, fallbackUrl }: ReaderViewProps) {
   const itemKey = item ? `${item.type}:${sourceUrl}` : null;
 
   useEffect(() => {
-    let cancelled = false;
-
     if (!item) return;
+    let cancelled = false;
 
     // eslint-disable-next-line react-hooks/set-state-in-effect -- reset necessário ao trocar de item
     setStatus("loading");
     setCurrentProgress(0);
     setErrorMsg(null);
+    setPages(null);
+    setFileKind(null);
 
-    fetchFile(item.sourceUrl)
-      .then((ab) => {
-        if (cancelled) return;
-        setFile(ab);
-        setStatus("ready");
-      })
-      .catch((err) => {
-        if (cancelled) return;
-        setErrorMsg(err instanceof Error ? err.message : "Falha ao baixar o arquivo.");
-        setStatus("error");
-      });
-
-    return () => {
+    const cleanup = () => {
       cancelled = true;
       setFile(null);
+      setPages(null);
+      setFileKind(null);
     };
+
+    void (async () => {
+      try {
+        // Páginas embutidas no catálogo (streaming direto, sem endpoint).
+        if (item.pages?.length) {
+          setPages(item.pages);
+          setStatus("ready");
+          return;
+        }
+
+        // Itens de streaming: chamam a fonte e recebem páginas OU um arquivo
+        // binário direto (ex.: .cbz/.pdf capturado de um site WordPress).
+        const isStreaming =
+          item.type === "comic" || /^\/api\/scrape(\?|$)/.test(item.sourceUrl);
+
+        if (isStreaming) {
+          const media = await fetchJson<StreamingMedia>(item.sourceUrl);
+          if (cancelled) return;
+
+          if (typeof media.file === "string") {
+            const kind = binaryKindFromUrl(media.file);
+            if (!kind) {
+              throw new Error(
+                "Formato de arquivo ainda não suportado pelo leitor."
+              );
+            }
+            const ab = await fetchFile(media.file);
+            if (cancelled) return;
+            setFileKind(kind);
+            setFile(ab);
+            setStatus("ready");
+            return;
+          }
+
+          if (!media.pages?.length) {
+            throw new Error("A extensão não devolveu páginas.");
+          }
+          setPages(media.pages);
+          setStatus("ready");
+          return;
+        }
+
+        // Arquivo binário direto (EPUB/CBZ).
+        const preKind =
+          binaryKindFromUrl(item.sourceUrl) ??
+          (item.type === "book" || item.type === "epub" ? "epub" : "cbz");
+        if (!preKind) {
+          throw new Error("Formato de arquivo ainda não suportado pelo leitor.");
+        }
+        const ab = await fetchFile(item.sourceUrl);
+        if (cancelled) return;
+        setFileKind(preKind);
+        setFile(ab);
+        setStatus("ready");
+      } catch (err) {
+        if (cancelled) return;
+        setErrorMsg(
+          err instanceof Error ? err.message : "Falha ao abrir o item."
+        );
+        setStatus("error");
+      }
+    })();
+
+    return cleanup;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [itemKey]);
 
@@ -193,7 +257,6 @@ export function ReaderView({ itemId, repoId, fallbackUrl }: ReaderViewProps) {
 
   const inLibrary = item ? isInLibrary(item.id) : false;
   const rendererProps = {
-    data: file as ArrayBuffer,
     initialPosition,
     onProgress: handleProgress,
     onError: handleRendererError,
@@ -246,13 +309,15 @@ export function ReaderView({ itemId, repoId, fallbackUrl }: ReaderViewProps) {
         </div>
       )}
 
-      {status === "ready" && file && item && (
+      {status === "ready" && (pages || file) && item && (
         <>
-          {item.type === "epub" ? (
-            <EpubView ref={rendererRef} {...rendererProps} />
-          ) : (
-            <CbzView ref={rendererRef} {...rendererProps} />
-          )}
+          {pages ? (
+            <PagesView ref={rendererRef} pages={pages} {...rendererProps} />
+          ) : fileKind === "epub" ? (
+            <EpubView ref={rendererRef} data={file as ArrayBuffer} {...rendererProps} />
+          ) : fileKind === "cbz" ? (
+            <CbzView ref={rendererRef} data={file as ArrayBuffer} {...rendererProps} />
+          ) : null}
 
           {!menuOpen && (
             <>

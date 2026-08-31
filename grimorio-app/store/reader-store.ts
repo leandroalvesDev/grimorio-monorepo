@@ -17,6 +17,8 @@ interface ReaderStore {
 
   addRepository: (url: string) => Promise<void>;
   refreshRepository: (repoId: string) => Promise<void>;
+  /** Recarrega todos os repositórios instalados (Sincronizar). */
+  syncAll: () => Promise<{ ok: number; failed: number }>;
   removeRepository: (repoId: string) => void;
   isInLibrary: (itemId: string) => boolean;
   toggleLibrary: (itemId: string) => void;
@@ -64,6 +66,8 @@ export const useReaderStore = create<ReaderStore>()(
             repositories: s.repositories.map((r) =>
               r.id === id ? { ...r, status: "error" as const } : r
             ),
+            // Remove catálogo antigo para não dar refresh "sujo" na UI.
+            catalogCache: omitKey(s.catalogCache, id),
           }));
           throw new Error("Não foi possível carregar este catálogo.");
         }
@@ -105,6 +109,21 @@ export const useReaderStore = create<ReaderStore>()(
           const repo = get().repositories.find((r) => r.id === repoId);
           if (!repo) return;
           await loadInto(repoId, repo.url);
+        },
+
+        syncAll: async () => {
+          const repos = get().repositories;
+          let ok = 0;
+          let failed = 0;
+          for (const repo of repos) {
+            try {
+              await loadInto(repo.id, repo.url);
+              ok += 1;
+            } catch {
+              failed += 1;
+            }
+          }
+          return { ok, failed };
         },
 
         removeRepository: (repoId) =>

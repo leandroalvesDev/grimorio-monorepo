@@ -1,0 +1,47 @@
+{
+  "id": "mangadex",
+  "name": "MangaDex",
+  "description": "Mangás direto da API oficial do MangaDex (api.mangadex.org): busca, capítulo e páginas em streaming.",
+  "version": "2.0.0",
+  "rails": [
+    {
+      "id": "traduzidos",
+      "title": "Em alta",
+      "items": [
+        {
+          "id": "one-piece",
+          "type": "comic",
+          "title": "One Piece",
+          "sourceUrl": "/api/scrape?provider=mangadex&query=One Piece",
+          "cover": "https://picsum.photos/seed/mangadex-one-piece/400/560",
+          "author": "Eiichiro Oda",
+          "description": "A jornada dos Chapéu de Palha rumo ao One Piece.",
+          "year": 1997,
+          "tags": ["mangá", "aventura", "shonen"]
+        },
+        {
+          "id": "berserk",
+          "type": "comic",
+          "title": "Berserk",
+          "sourceUrl": "/api/scrape?provider=mangadex&query=Berserk",
+          "cover": "https://picsum.photos/seed/mangadex-berserk/400/560",
+          "author": "Kentaro Miura",
+          "description": "Guts e a maldição do Behelit.",
+          "year": 1989,
+          "tags": ["mangá", "seinen", "fantasia"]
+        },
+        {
+          "id": "jujutsu-kaisen",
+          "type": "comic",
+          "title": "Jujutsu Kaisen",
+          "sourceUrl": "/api/scrape?provider=mangadex&query=Jujutsu Kaisen",
+          "cover": "https://picsum.photos/seed/mangadex-jjk/400/560",
+          "author": "Gege Akutami",
+          "description": "Yuji Itadori e a fileira de maldições de Toquio.",
+          "year": 2018,
+          "tags": ["mangá", "shonen", "sobrenatural"]
+        }
+      ]
+    }
+  ]
+}

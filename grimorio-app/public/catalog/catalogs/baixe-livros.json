@@ -1,0 +1,47 @@
+{
+  "id": "baixe-livros",
+  "name": "Baixe Livros",
+  "description": "Livros: o scraper localiza a página do livro e extrai a URL direta de download (EPUB/PDF).",
+  "version": "2.0.0",
+  "rails": [
+    {
+      "id": "classicos",
+      "title": "Clássicos",
+      "items": [
+        {
+          "id": "dom-casmurro",
+          "type": "book",
+          "title": "Dom Casmurro",
+          "sourceUrl": "/api/scrape?provider=baixe-livros&query=Dom Casmurro",
+          "cover": "https://picsum.photos/seed/bl-dom/400/560",
+          "author": "Machado de Assis",
+          "description": "Era de teatro, Capitu e o ciúme eterno de Bentinho.",
+          "year": 1899,
+          "tags": ["livro", "clássico", "português"]
+        },
+        {
+          "id": "capitaes-da-areia",
+          "type": "book",
+          "title": "Capitães da Areia",
+          "sourceUrl": "/api/scrape?provider=baixe-livros&query=Capitães da Areia",
+          "cover": "https://picsum.photos/seed/bl-capitaes/400/560",
+          "author": "Jorge Amado",
+          "description": "Os meninos de rua de Salvador.",
+          "year": 1937,
+          "tags": ["livro", "brasileiro", "drama"]
+        },
+        {
+          "id": "o-cortico",
+          "type": "book",
+          "title": "O Cortiço",
+          "sourceUrl": "/api/scrape?provider=baixe-livros&query=O Cortico",
+          "cover": "https://picsum.photos/seed/bl-cortico/400/560",
+          "author": "Aluísio Azevedo",
+          "description": "Retrato naturalista do cortiço carioca.",
+          "year": 1890,
+          "tags": ["livro", "clássico", "naturalismo"]
+        }
+      ]
+    }
+  ]
+}
